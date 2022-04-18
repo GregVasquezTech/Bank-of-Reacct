@@ -41,12 +41,12 @@ class App extends Component {
      return sumOfDebit 
     }
 
-    const creditAPI = async () => {
+    const creditAPI = async () => { 
       const response = await fetch("https://moj-api.herokuapp.com/credits") // Calling the credit API JSON that will add to the user's account balance.
-      const credits = await response.json()
-      this.setState({credits: credits})
+      const credits = await response.json() //replacing the JSON into JS object and putting it into the variable credits.
+      this.setState({credits: credits}) // Updating the credits array to the newly object.
 
-      let sumOfCredit = credits.map((credit) => {
+      let sumOfCredit = credits.map((credit) => { // Summing up all the creedit amount from the API and adding it to the user's account balance.
         return this.setState({accountBalance: this.state.accountBalance + credit.amount})
       })
       return sumOfCredit
