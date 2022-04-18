@@ -1,18 +1,18 @@
 import React, {Component} from 'react';
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
-import axios from 'axios';
 import Home from './Home';
 import UserProfile from './UserProfile';
 import LogIn from './Login'
 import Debits from './Debit';
+import Credits from './Credit';
+
 
 class App extends Component {
   constructor() {
     super();
     let todayDate = new Date().toISOString().slice(0,10)
     this.state = {
-      accountBalance: 14568.27,
-      description: '',
+      accountBalance: 0,
       debits: [],
       credits: [],
       currentUser: {
@@ -28,28 +28,31 @@ class App extends Component {
     this.setState({currentUser: newUser})
   }
 
-  // This is getting data from a JSON website. 
+  //Calling the two API to update balance.
   async componentDidMount() {
-    let debitAPI = await axios.get("https://moj-api.herokuapp.com/debits")
-    console.log(debitAPI.data)
-    let creditAPI = await axios.get('https://moj-api.herokuapp.com/credits')
-    console.log(creditAPI.data)
+    const debitAPI = async () => {
+      const response = await fetch("https://moj-api.herokuapp.com/debits") // Calling the debit API JSON that will subtract from the user's account balance.
+      const debits = await response.json() // replacing the JSON into JS object and putting it into the variable debits.
+      this.setState({debits: debits}) // Updating the debits array to the newly object.
+      
+      let sumOfDebit = debits.map((debit) => { // Summing up all the debit amount from the API and subtracting it from the user's account balance.
+        return this.setState({accountBalance: this.state.accountBalance - debit.amount})
+      })
+     return sumOfDebit 
+    }
 
-    // Creating variables that only holds the 'description', 'amount', and 'date' from the JSON websites.
-    let debits = debitAPI.data
-    let credits = creditAPI.data
+    const creditAPI = async () => {
+      const response = await fetch("https://moj-api.herokuapp.com/credits") // Calling the credit API JSON that will add to the user's account balance.
+      const credits = await response.json()
+      this.setState({credits: credits})
 
-  
-    let totalDebit, totalCredit = 0; // Creating variables that will hold the total amount on debit/credit.
-    debits.forEach((debit) => {
-      totalDebit = totalDebit + debit.amount
-    })
-    credits.forEach((credit) => {
-      totalCredit = totalCredit + credit.amount
-    })
-
-    let newBalance =  totalCredit - totalDebit // Updates the accountBalance 
-    this.setState({debits, credits, newBalance})
+      let sumOfCredit = credits.map((credit) => {
+        return this.setState({accountBalance: this.state.accountBalance + credit.amount})
+      })
+      return sumOfCredit
+    }
+    debitAPI()
+    creditAPI()
   }
 
   addDebit = (e) => {
@@ -60,23 +63,42 @@ class App extends Component {
       amount: Number(e.target[1].value),
       date: String(todayDate)
     }
-    let updateDebit = [...this.state.debits]
+    let updateDebit = this.state.debits
     updateDebit.push(newDebit)
-    let newBalance = (Number(this.state.accountBalance) - (Number(newDebit.amount)).toFixed(2))
-    this.setState({accountBalance: newBalance})
-    this.setState({debits: newDebit})
+    let newBalance = (Number(this.state.accountBalance) - (Number(newDebit.amount)))
+    this.setState({debits: updateDebit, accountBalance: newBalance})
+
+    e.target.description.value = ""
+    e.target.amount.value = ""
+  }
+
+  addCredit = (e) => {
+    e.preventDefault()
+    let todayDate = new Date().toISOString().slice(0,10)
+    let newCredit = {
+      description: e.target[0].value,
+      amount: Number(e.target[1].value),
+      date: String(todayDate)
+    }
+    let updateCredit = this.state.credits
+    updateCredit.push(newCredit)
+    let newBalance = (Number(this.state.accountBalance) + (Number(newCredit.amount)))
+    this.setState({credts: updateCredit, accountBalance: newBalance})
+
+    e.target.description.value = ""
+    e.target.amount.value = ""
   }
   render() {
-    const {debits} = this.state;
-    const HomeComponent = () => (<Home accountBalance={this.state.accountBalance}/>);
+    const HomeComponent = () => (<Home accountBalance={this.state.accountBalance}/>)
     
     const UserProfileComponent = () => (
       <UserProfile userName={this.state.currentUser.userName} memberSince={this.state.currentUser.memberSince}/>
-    );
+    )
     const LogInComponent = () => (<LogIn user={this.state.currentUser} mockLogIn={this.mockLogIn}/>) //Pass props to "LogIn" component
     
-    const DebitsComponent =() => (<Debits addDebit={this.addDebit} debits={debits} accountBalance={this.state.accountBalance}/>)
+    const DebitsComponent =() => (<Debits addDebit={this.addDebit} debits={this.state.debits} accountBalance={this.state.accountBalance}/>)
 
+    const CreditsComponent = () => (<Credits addCredit={this.addCredit} credits={this.state.credits} accountBalance={this.state.accountBalance}/>)
     return (
       <Router>
         <Switch>
@@ -84,6 +106,7 @@ class App extends Component {
           <Route exact path="/userProfile" render={UserProfileComponent}/>
           <Route exact path="/login" render={LogInComponent}/>
           <Route exact path="/debits" render={DebitsComponent}/>
+          <Route exact path ="/credits" render={CreditsComponent}/>
         </Switch>
       </Router>
     );
