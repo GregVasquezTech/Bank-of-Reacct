@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/Bank-of-React/static/css/main.4d3bbe2c.css",
+    "main.js": "/Bank-of-React/static/js/main.ff6f8397.js",
+    "index.html": "/Bank-of-React/index.html",
+    "main.4d3bbe2c.css.map": "/Bank-of-React/static/css/main.4d3bbe2c.css.map",
+    "main.ff6f8397.js.map": "/Bank-of-React/static/js/main.ff6f8397.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4d3bbe2c.css",
+    "static/js/main.ff6f8397.js"
+  ]
+}
