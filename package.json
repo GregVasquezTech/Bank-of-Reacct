@@ -1,7 +1,7 @@
 {
   "name": "bank-of-react",
   "version": "0.1.0",
-  "homepage": "https://GregVasquezTech.github.io/Bank-of-React/tree/DebitCredit/src",
+  "homepage": "https://GregVasquezTech.github.io/Bank-of-React",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
