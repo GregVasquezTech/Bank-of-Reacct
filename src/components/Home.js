@@ -7,7 +7,7 @@ class Home extends Component {
         return (
             <div>
                 <img src="https://picsum.photos/200/200" alt="bank" />
-                <h1>Bank of React</h1>
+                <h1><b>Bank of React</b></h1>
 
                 <Link to="/userProfile">User Profile</Link>
                 <br/>
