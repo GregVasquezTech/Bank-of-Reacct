@@ -15,16 +15,14 @@ const Debits = (props) => {
   
   return (
     <div>
-      <Card>
-        <h1>Debit</h1>
-        <form onSubmit={props.addDebit}>
-          <AccountBalance accountBalance = {props.accountBalance}/>
-          {debitsView()}
-            <input type="text" name="description" placeholder="description"/>
-            <input type="number" name="amount" placeholder="amount"/>
-            <button type="submit">Add Debit</button>
-        </form>
-      </Card>
+      <h1>Debit</h1>
+      <form onSubmit={props.addDebit}>
+        <AccountBalance accountBalance = {props.accountBalance}/>
+        {debitsView()}
+          <input type="text" name="description" placeholder="description"/>
+          <input type="number" name="amount" placeholder="amount"/>
+          <button type="submit">Add Debit</button>
+      </form>
       <div>
           <Link to="/">Home</Link>
           <br/>

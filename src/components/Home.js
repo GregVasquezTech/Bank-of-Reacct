@@ -1,26 +1,52 @@
-import React, {Component} from 'react';
+import React, { useState } from 'react';
 import AccountBalance from './AccountBalance';
-import {Link} from 'react-router-dom';
+import { Card, Button, Alert } from 'react-bootstrap';
+import { useAuth } from '../contexts/AuthContext'
+import { Link, useHistory } from 'react-router-dom';
 
-class Home extends Component {
-    render() {
-        return (
-            <div>
-                <img src="https://picsum.photos/200/200" alt="bank" />
-                <h1><b>Bank of React</b></h1>
+export default function Home() {
 
-                <Link to="/userProfile">User Profile</Link>
-                <br/>
-                <Link to="/login">Login</Link>
-                <br/>
-                <Link to="/debit">Debit</Link>
-                <br/>
-                <Link to="/credit">Credit</Link>
+    const [error, setError] = useState('')
+    const { currentUser, logout } = useAuth()
+    const history = useHistory()
+    const accountBalance = useState()
 
-                <AccountBalance accountBalance={this.props.accountBalance}/>
-            </div>
-        );
+    function handleLogout() {
+        setError('')
+
+        try {
+            logout()
+            history.push('/login')
+        } catch {
+            setError('Failed to logout.')
+        }
     }
+    return (
+        <>
+            <Card>
+                <Card.Body>
+                    <h2 className="text-center mb-4">Home</h2>
+                    {error && <Alert variant="danger">{error}</Alert>}
+                    <strong>Email: </strong>{currentUser.email}
+                    <AccountBalance accountBalance={accountBalance} />
+                    <Link to="/userProfile" className='btn btn-primary w-100 mt-3'>
+                        User Profile
+                    </Link>
+                    <br/>
+                    <Link to="/debit" className='btn btn-primary w-100 mt-3'>
+                        Debit
+                    </Link>
+                    <br/>
+                    <Link to="/credit" className='btn btn-primary w-100 mt-3'>
+                        Credit
+                    </Link>
+                    <br/>
+                    
+                </Card.Body>
+            </Card>
+            <div className='w-100 text-center mt-2'>
+                <Button variant="link" onClick={handleLogout}>Logout</Button>
+            </div>
+        </>
+    );
 }
-
-export default Home;
